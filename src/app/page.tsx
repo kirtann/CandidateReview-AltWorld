@@ -1,113 +1,226 @@
-import Image from "next/image";
+"use client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { FaHome as HomeIcon } from "react-icons/fa";
+import { FaPlus as PlusIcon } from "react-icons/fa";
+import { IoCube } from "react-icons/io5";
+import { MdEdit } from "react-icons/md";
+import { VscFiles } from "react-icons/vsc";
+import CandidateDisplay from "@/components/CandidateDisplay";
 
 export default function Home() {
+  const router = useRouter();
+  const [candidates, setCandidates] = useState([]);
+  const [activeCandidate, setActiveCandidate] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://66431d353c01a059ea218f24.mockapi.io/api/v1/candidates"
+        );
+        const fetchedData = response.data.map((candidate: any) => {
+          candidate.behavioural = parseInt(candidate.behavioural);
+          candidate.communication = parseInt(candidate.communication);
+          candidate.situational = parseInt(candidate.situational);
+          let score =
+            ((candidate.behavioural +
+              candidate.communication +
+              candidate.situational) /
+              30) *
+            100;
+          score = Math.round(score);
+          return {
+            score: score,
+            ...candidate,
+          };
+        });
+        setCandidates(fetchedData);
+        setActiveCandidate(fetchedData[0]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleCandidateClick = (candidate: any) => {
+    setActiveCandidate(candidate);
+  };
+
+  console.log(candidates);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      <div className="flex flex-row h-screen bg-slate-100">
+        <div className="hidden lg:block basis-[17%]">
+          <div className=" ms-8 mt-7 flex w-full">
+            <img className="h-full" src="./logoimg.png" alt="logo" />
+            <p className="ms-2 text-center font-sans font-semibold">
+              Hi, AltWorld
+            </p>
+          </div>
+          <hr className=" bg-black mx-6 mt-4" />
+          <div className="mt-8 w-full">
+            <div className="flex">
+              <button className="bg-white ms-8 w-8 h-8 rounded-full items-center flex justify-center me-3">
+                <HomeIcon color="cyan" />
+              </button>
+              <p className="font-sans font-semibold">Dashboard</p>
+            </div>
+            <div className="m-4 p-3 bg-cyan-400 rounded-2xl">
+              <button className="bg-white mb-3 w-8 h-8 rounded-xl items-center flex justify-center me-3">
+                <PlusIcon color="grey" />
+              </button>
+              <div className="flex flex-col gap-2">
+                <p className=" text-[0.9] text-white font-semibold">
+                  New Assignment?
+                </p>
+                <p className=" text-xs text-white">
+                  Select from pre-defined questions to have a quick turnaround.
+                </p>
+                <button className="bg-white rounded-2xl p-2 text-xs font-semibold">
+                  Create New Assignment
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="basis-[83%] mt-4">
+          <div className="ms-8">
+            <p className="text-xs">
+              <span className=" text-gray-400">Pages</span> / Assignment
+            </p>
+            <p className="font-bold ">Sales BDE</p>
+          </div>
+          <div className="m-4 w-[80vw] h-[85vh]">
+            <div className="flex flex-row h-full w-full gap-4 ">
+              <div className="basis-[33%] h-full bg-white rounded-xl">
+                <div className="flex flex-col h-full">
+                  <div className="basis-[35%] p-4">
+                    <div className="flex flex-col">
+                      <div className="flex justify-between">
+                        <p className="font-bold text-lg">Sales BDE</p>
+                        <div className="flex">
+                          <p className="text-lg text-green-500 font-bold me-2">
+                            Active
+                          </p>
+                          <button className="bg-white shadow-xl mb-3 w-6 h-6 rounded-lg items-center flex justify-center me-3">
+                            <MdEdit color="grey" />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 mt-3">
+                        <div className="flex justify-between">
+                          <p className="font-semibold text-sm text-gray-500">
+                            Assignment Link
+                          </p>
+                          <p className="font-semibold text-sm text-blue-500">
+                            https://tiny.url/asknakdna/
+                          </p>
+                        </div>
+                        <div className="flex justify-between">
+                          <p className="font-semibold text-sm text-gray-500">
+                            Assignment Hour
+                          </p>
+                          <p className="font-semibold text-sm text-gray-500">
+                            3 hours
+                          </p>
+                        </div>
+                        <div className="flex justify-between">
+                          <p className="font-semibold text-sm text-gray-500">
+                            Assignment Ends at
+                          </p>
+                          <p className="font-semibold text-sm text-gray-500">
+                            11 March 2024
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className=" mt-5 flex flex-row w-full h-1/2">
+                      <button className="shadow-xl text-sm font-semibold mb-3 w-[35%] h-[40%] rounded-lg items-center flex justify-center me-3">
+                        <IoCube />
+                        <span className="ms-1">To Review</span>
+                      </button>
+                      <button className=" mb-3 text-sm font-semibold w-[35%] h-[40%] rounded-lg items-center flex justify-center">
+                        <VscFiles fill="black" />
+                        <span className="ms-1">Shortlisted</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="basis-[65%] overflow-auto">
+                    <div className="flex flex-col">
+                      <div className="flex justify-between p-4">
+                        <p className="font-semibold text-sm text-gray-500">
+                          Candidate
+                        </p>
+                        <p className="font-semibold text-sm text-gray-500">
+                          Score
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        {candidates.length === 0 ? (
+                          <p className="text-center text-gray-500">
+                            Wait till the data is fetched
+                          </p>
+                        ) : (
+                          candidates.map((candidate: any) => {
+                            return (
+                              <div
+                                key={candidate.id}
+                                className="p-4 bg-white shadow-md rounded-md cursor-pointer flex flex-row justify-between"
+                                onClick={() => handleCandidateClick(candidate)}
+                              >
+                                <div className="flex items-center">
+                                  <img
+                                    className=" w-7 h-7 me-2"
+                                    src={candidate.avatar}
+                                    alt=""
+                                  />
+                                  <div className="flex flex-col">
+                                    <h2 className="text-sm font-semibold">
+                                      {candidate.name}
+                                    </h2>
+                                    <p className=" text-[0.7rem] text-gray-500">
+                                      {candidate.email}
+                                    </p>
+                                  </div>
+                                </div>
+                                <p
+                                  className={`text-sm font-semibold ${
+                                    candidate.score > 50
+                                      ? "text-green-500"
+                                      : "text-yellow-500"
+                                  }`}
+                                >
+                                  {candidate.score} %
+                                </p>
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="basis-[67%] h-full bg-white rounded-xl">
+                {activeCandidate ? (
+                  <CandidateDisplay candidate={activeCandidate} />
+                ) : (
+                  <div className="h-full w-full flex justify-center items-center">
+                    <p>
+                      No candidate selected or wait till the data is fetched
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </>
   );
 }
