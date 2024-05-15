@@ -9,10 +9,25 @@ import { MdEdit } from "react-icons/md";
 import { VscFiles } from "react-icons/vsc";
 import CandidateDisplay from "@/components/CandidateDisplay";
 
+export interface Candidate {
+  id: string;
+  name: string;
+  email: string;
+  about: string;
+  experience: string;
+  hobbies: string;
+  introduction: string;
+  behavioural: number;
+  communication: number;
+  situational: number;
+  avatar: string;
+  score: number;
+}
+
 export default function Home() {
   const router = useRouter();
-  const [candidates, setCandidates] = useState([]);
-  const [activeCandidate, setActiveCandidate] = useState(null);
+  const [candidates, setCandidates] = useState<Array<Candidate>>([]);
+  const [activeCandidate, setActiveCandidate] = useState<Candidate>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,22 +35,24 @@ export default function Home() {
         const response = await axios.get(
           "https://66431d353c01a059ea218f24.mockapi.io/api/v1/candidates"
         );
-        const fetchedData = response.data.map((candidate: any) => {
-          candidate.behavioural = parseInt(candidate.behavioural);
-          candidate.communication = parseInt(candidate.communication);
-          candidate.situational = parseInt(candidate.situational);
-          let score =
-            ((candidate.behavioural +
-              candidate.communication +
-              candidate.situational) /
-              30) *
-            100;
-          score = Math.round(score);
-          return {
-            score: score,
-            ...candidate,
-          };
-        });
+        const fetchedData: Array<Candidate> = response.data.map(
+          (candidate: any) => {
+            candidate.behavioural = parseInt(candidate.behavioural);
+            candidate.communication = parseInt(candidate.communication);
+            candidate.situational = parseInt(candidate.situational);
+            let score =
+              ((candidate.behavioural +
+                candidate.communication +
+                candidate.situational) /
+                30) *
+              100;
+            score = Math.round(score);
+            return {
+              score: score,
+              ...candidate,
+            };
+          }
+        );
         setCandidates(fetchedData);
         setActiveCandidate(fetchedData[0]);
       } catch (error) {
@@ -50,11 +67,9 @@ export default function Home() {
     setActiveCandidate(candidate);
   };
 
-  console.log(candidates);
-
   return (
     <>
-      <div className="flex flex-row h-screen bg-slate-100">
+      <div className="flex flex-row  bg-slate-100">
         <div className="hidden lg:block basis-[17%]">
           <div className=" ms-8 mt-7 flex w-full">
             <img className="h-full" src="./logoimg.png" alt="logo" />
@@ -88,15 +103,15 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="basis-[83%] mt-4">
+        <div className="basis-[83%] h-full mt-4">
           <div className="ms-8">
             <p className="text-xs">
               <span className=" text-gray-400">Pages</span> / Assignment
             </p>
             <p className="font-bold ">Sales BDE</p>
           </div>
-          <div className="m-4 w-[80vw] h-[85vh]">
-            <div className="flex flex-row h-full w-full gap-4 ">
+          <div className="m-4 w-[90vw] md:w-[95vw] lg:w-[80vw] h-[85vh]">
+            <div className="flex flex-col items-center md:flex-row md:justify-normal md:items-start h-full w-full gap-4 ">
               <div className="basis-[33%] h-full bg-white rounded-xl">
                 <div className="flex flex-col h-full">
                   <div className="basis-[35%] p-4">
@@ -206,7 +221,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="basis-[67%] h-full bg-white rounded-xl">
+              <div className="basis-[67%] h-full bg-white rounded-xl ">
                 {activeCandidate ? (
                   <CandidateDisplay candidate={activeCandidate} />
                 ) : (

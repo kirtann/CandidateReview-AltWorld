@@ -1,9 +1,14 @@
+import { Candidate } from "@/app/page";
 import Carousel from "./Carousel";
 
-export default function CandidateDisplay({ candidate }: { candidate: any }) {
+export default function CandidateDisplay({
+  candidate,
+}: {
+  candidate: Candidate;
+}) {
   return (
-    <div className="flex h-full w-full">
-      <div className=" basis-1/2 flex flex-col h-full">
+    <div className="flex flex-col md:flex-row h-full w-full">
+      <div className=" lg:basis-1/2 flex flex-col h-full">
         <div className="flex flex-col h-full p-5">
           <div className="basis-[14%] flex justify-between items-center">
             <div className="flex items-center">
@@ -103,7 +108,7 @@ export default function CandidateDisplay({ candidate }: { candidate: any }) {
           </div>
         </div>
       </div>
-      <div className="h-full basis-1/2 p-2">
+      <div className="h-full flex md:hidden lg:block lg:basis-1/2 p-2 justify-center">
         <Carousel
           images={[
             "/carouselimg.png",

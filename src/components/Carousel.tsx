@@ -17,7 +17,7 @@ export default function Carousel({ images }: { images: Array<string> }) {
   };
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-[80vh] w-[80%] md:w-full md:h-full">
       <AiOutlineLeft
         onClick={handlePrevSlide}
         className="absolute left-0 m-auto text-5xl inset-y-1/2 cursor-pointer text-gray-400 z-20"
