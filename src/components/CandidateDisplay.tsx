@@ -6,6 +6,9 @@ export default function CandidateDisplay({
 }: {
   candidate: Candidate;
 }) {
+  const handleShortlist = () => {
+    candidate.shortlisted = true;
+  };
   return (
     <div className="flex flex-col md:flex-row h-full w-full">
       <div className=" lg:basis-1/2 flex flex-col h-full">
@@ -101,7 +104,10 @@ export default function CandidateDisplay({
               <p className="text-sm text-gray-500">{candidate.introduction}</p>
             </div>
             <div className="flex justify-center items-center">
-              <button className=" text-xl font-bold bg-cyan-400 text-white w-[80%] rounded-lg h-full">
+              <button
+                onClick={handleShortlist}
+                className=" text-xl font-bold bg-cyan-400 text-white w-[80%] rounded-lg h-full"
+              >
                 Shortlist
               </button>
             </div>

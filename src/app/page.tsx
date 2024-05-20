@@ -22,12 +22,14 @@ export interface Candidate {
   situational: number;
   avatar: string;
   score: number;
+  shortlisted: boolean;
 }
 
 export default function Home() {
   const router = useRouter();
   const [candidates, setCandidates] = useState<Array<Candidate>>([]);
   const [activeCandidate, setActiveCandidate] = useState<Candidate>();
+  const [shortlistedCan, setShortlistedCan] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,6 +51,7 @@ export default function Home() {
             score = Math.round(score);
             return {
               score: score,
+              shortlisted: false,
               ...candidate,
             };
           }
@@ -65,6 +68,10 @@ export default function Home() {
 
   const handleCandidateClick = (candidate: any) => {
     setActiveCandidate(candidate);
+  };
+
+  const handleShortlistselect = () => {
+    setShortlistedCan(!shortlistedCan);
   };
 
   return (
@@ -159,7 +166,10 @@ export default function Home() {
                         <IoCube />
                         <span className="ms-1">To Review</span>
                       </button>
-                      <button className=" mb-3 text-sm font-semibold w-[35%] h-[40%] rounded-lg items-center flex justify-center">
+                      <button
+                        onClick={handleShortlistselect}
+                        className=" mb-3 text-sm font-semibold w-[35%] h-[40%] rounded-lg items-center flex justify-center"
+                      >
                         <VscFiles fill="black" />
                         <span className="ms-1">Shortlisted</span>
                       </button>
@@ -180,6 +190,47 @@ export default function Home() {
                           <p className="text-center text-gray-500">
                             Wait till the data is fetched
                           </p>
+                        ) : shortlistedCan ? (
+                          candidates
+                            .filter(
+                              (candidate) => candidate.shortlisted === true
+                            )
+                            .map((candidate: any) => {
+                              return (
+                                <div
+                                  key={candidate.id}
+                                  className="p-4 bg-white shadow-md rounded-md cursor-pointer flex flex-row justify-between"
+                                  onClick={() =>
+                                    handleCandidateClick(candidate)
+                                  }
+                                >
+                                  <div className="flex items-center">
+                                    <img
+                                      className=" w-7 h-7 me-2"
+                                      src={candidate.avatar}
+                                      alt=""
+                                    />
+                                    <div className="flex flex-col">
+                                      <h2 className="text-sm font-semibold">
+                                        {candidate.name}
+                                      </h2>
+                                      <p className=" text-[0.7rem] text-gray-500">
+                                        {candidate.email}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <p
+                                    className={`text-sm font-semibold ${
+                                      candidate.score > 50
+                                        ? "text-green-500"
+                                        : "text-yellow-500"
+                                    }`}
+                                  >
+                                    {candidate.score} %
+                                  </p>
+                                </div>
+                              );
+                            })
                         ) : (
                           candidates.map((candidate: any) => {
                             return (
